@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.venv-*/
+
+# Model and benchmark assets (provided separately)
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Predictions and submission artifacts
+outputs/
+predictions/
+*.dsp5
+*.flo5
+*.hdf5
+*.npy
+*.npz
+*.log
+*.pid
+
+# Local configuration
+.env
+.idea/
+.vscode/
+
