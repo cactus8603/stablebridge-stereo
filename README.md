@@ -39,10 +39,11 @@ driver. Run the commands below from this directory.
 
 ## Pretrained weights
 
-Extract `stereo_weights.zip` from the project directory:
+Download [weights.zip](https://drive.google.com/file/d/1XDp8a5N77kJrabzSdFfXm33w1WJyCLFK/view)
+from Google Drive and extract it from the project directory:
 
 ```bash
-unzip /path/to/stereo_weights.zip
+unzip /path/to/weights.zip
 ```
 
 This installs the CroCo checkpoint, fixed evidence module and six selector
