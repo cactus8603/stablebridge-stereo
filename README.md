@@ -1,20 +1,23 @@
 # CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher
 
-This repository contains the code for our paper:
+Code for our **NeurIPS 2026 RoCo-Spring Workshop** paper:
 
 [CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher](docs/paper.pdf)<br>
-Shao-Kai Liu, Yun-Tze Tsai and Chih-Chung Hsu<br>
-RoCo-Spring: The Robust Correspondence Challenge, NeurIPS 2026 Workshop
+Shao-Kai Liu, Yun-Tze Tsai and Chih-Chung Hsu
 
-```bibtex
-@misc{liu2026crocostablebridge,
-  title={CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher},
-  author={Liu, Shao-Kai and Tsai, Yun-Tze and Hsu, Chih-Chung},
-  year={2026},
-  howpublished={RoCo-Spring Workshop, NeurIPS 2026},
-  url={https://github.com/cactus8603/stablebridge-stereo/blob/main/docs/paper.pdf}
-}
-```
+![StableBridge keeps a clean crop unchanged and selects denoising for its noisy counterpart](docs/figures/example.png)
+
+Example from scene 0022, outside the selector's development scenes: denoising
+helps the noisy crop and harms its clean counterpart. Error maps share a color
+scale within each row.
+
+## Method
+
+![StableBridge treatment proposal, benefit and harm check, and five-crop voting](docs/figures/overview.png)
+
+Early CroCo features propose a treatment; a benefit and harm check accepts it or
+keeps the input unchanged. A treatment is applied to the full stereo pair when
+at least three of five crops agree.
 
 ## Installation
 
@@ -168,6 +171,18 @@ model, input data, batch size or software changes. To use refitted heads, add
 Each stage can run on one RTX 3090 (24 GiB). Full-resolution FP32 CroCo inference
 used 6.821 GiB peak allocated memory with four pairs per batch. Training times,
 measurement conditions and CPU/storage requirements are in [COMPUTE.md](COMPUTE.md).
+
+## Citation
+
+```bibtex
+@misc{liu2026crocostablebridge,
+  title={CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher},
+  author={Liu, Shao-Kai and Tsai, Yun-Tze and Hsu, Chih-Chung},
+  year={2026},
+  howpublished={RoCo-Spring Workshop, NeurIPS 2026},
+  url={https://github.com/cactus8603/stablebridge-stereo/blob/main/docs/paper.pdf}
+}
+```
 
 ## Acknowledgements
 
