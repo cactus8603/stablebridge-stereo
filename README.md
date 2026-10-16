@@ -1,7 +1,20 @@
-# CroCo-StableBridge
+# CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher
 
-Training, evaluation and submission code for CroCo-StableBridge on the
-RoCo-Spring Stereo track. Pretrained weights are distributed separately.
+This repository contains the code for our paper:
+
+[CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher](docs/paper.pdf)<br>
+Shao-Kai Liu, Yun-Tze Tsai and Chih-Chung Hsu<br>
+RoCo-Spring: The Robust Correspondence Challenge, NeurIPS 2026 Workshop
+
+```bibtex
+@misc{liu2026crocostablebridge,
+  title={CroCo-StableBridge: Risk-Aware Input Routing for a Frozen Stereo Matcher},
+  author={Liu, Shao-Kai and Tsai, Yun-Tze and Hsu, Chih-Chung},
+  year={2026},
+  howpublished={RoCo-Spring Workshop, NeurIPS 2026},
+  url={https://github.com/cactus8603/stablebridge-stereo/blob/main/docs/paper.pdf}
+}
+```
 
 ## Installation
 
