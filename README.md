@@ -23,11 +23,14 @@ at least three of five crops agree.
 
 Linux x86_64, Python 3.12.14 and PyTorch 2.6.0+cu124.
 Dependencies are pinned in `pyproject.toml` and `requirements.lock`.
-OpenCV needs `libGL.so.1` and `libglib-2.0.so.0`; downloading data requires `curl`.
+OpenCV needs `libGL.so.1` and `libglib-2.0.so.0`.
+The commands below also use `git`, `curl` and `unzip`.
 
-From the project directory, run:
+Clone the repository and install the environment:
 
 ```bash
+git clone https://github.com/cactus8603/stablebridge-stereo.git
+cd stablebridge-stereo
 bash setup.sh
 source .venv/bin/activate
 export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
