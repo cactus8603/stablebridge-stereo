@@ -1,128 +1,165 @@
-# StableBridge Stereo Submission Runtime
+# CroCo-StableBridge
 
-Submission-only runtime for the frozen **CroCo-StableBridge** method on the
-RoCo-Spring stereo track. This repository contains the code needed to turn
-Spring/RobustSpring test RGB pairs into official disparity submission files.
+Training, evaluation and submission code for CroCo-StableBridge on the
+RoCo-Spring Stereo track. Pretrained weights are distributed separately.
 
-> This is an inference and packaging release. It intentionally excludes
-> controller training, teacher/cache construction, OOF experiments, ablations,
-> paper analysis, datasets, checkpoints, predictions, and historical outputs.
+## Installation
 
-## What is included
+Linux x86_64, Python 3.12.14 and PyTorch 2.6.0+cu124.
+Dependencies are pinned in `pyproject.toml` and `requirements.lock`.
+OpenCV needs `libGL.so.1` and `libglib-2.0.so.0`; downloading data requires `curl`.
 
-- Frozen three-action StableBridge router and dual-depth evidence model.
-- CroCo-Stereo adapter plus the pinned upstream CroCo source.
-- Resumable prediction runner for left/right disparity references.
-- Prediction-tree validation and official Spring packaging orchestration.
-- Focused tests, source provenance, and per-file SHA-256 checksums.
-
-```text
-RGB stereo pairs
-  -> StableBridge Core-3 route (identity / denoise / sharpen)
-  -> frozen CroCo-Stereo inference
-  -> .dsp5 prediction tree
-  -> official Spring packer
-  -> disp1_submission.hdf5 / disp1_robustness.hdf5
-```
-
-## Repository layout
-
-| Path | Purpose |
-| --- | --- |
-| `tracks/stereo/run_stablebridge_submission.py` | Generate `.dsp5` predictions |
-| `tracks/stereo/run_submission_pipeline.py` | Resumable inference + packaging workflow |
-| `tracks/stereo/package_submission.py` | Validate/package existing predictions |
-| `tracks/stereo/croco_stablebridge/` | Frozen StableBridge runtime |
-| `vendor/croco/` | Pinned upstream CroCo source |
-| `SOURCE_MANIFEST.json` | Canonical-source provenance |
-| `SHA256SUMS` | Bundle integrity manifest |
-
-## Requirements
-
-- Linux, Python 3.12
-- NVIDIA GPU with a compatible CUDA 12.4 runtime
-- PyTorch 2.6.0 and torchvision 0.21.0
-- Dependencies in `environment/requirements.txt`
-
-Example environment setup:
+From the project directory, run:
 
 ```bash
-python3.12 -m venv .venv
+bash setup.sh
 source .venv/bin/activate
-pip install torch==2.6.0 torchvision==0.21.0 \
-  --index-url https://download.pytorch.org/whl/cu124
-pip install -r environment/requirements.txt
+export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4
 ```
 
-## External assets
+The installer uses `python3.12`; set `PYTHON_BIN` to use another Python 3.12.14
+executable. PyTorch includes the CUDA 12.4 runtime and needs a compatible NVIDIA
+driver. Run the commands below from this directory.
 
-Assets are deliberately not committed to this repository.
+## Pretrained weights
 
-| Asset | Required identity |
-| --- | --- |
-| CroCo-Stereo Spring checkpoint | SHA-256 `123273a722a58134c6816efe5122c427815c92f82896be4d484e6d21b52da575` |
-| StableBridge deployment bundle | `FROZEN_METHOD.json`, `fixed-evidence.pt`, and six ensemble heads |
-| Data | Spring and RobustSpring test images |
-| Packers | Official `disp1_subsampling` / `disp1_robust_subsampling` and HDF5 runtime |
-
-The StableBridge bundle validates every artifact against the SHA-256 values in
-`FROZEN_METHOD.json`. You may place checkpoints anywhere and pass explicit CLI
-paths. Alternatively, set `ROCO_SPRING_CHECKPOINT_ROOT`.
-
-## Generate predictions
-
-Run from the repository root:
+Extract `stereo_weights.zip` from the project directory:
 
 ```bash
-PYTHONPATH=. python tracks/stereo/run_stablebridge_submission.py \
-  --output-root /path/to/predictions \
-  --clean-test-root /path/to/spring/test \
-  --robust-test-root /path/to/robust_spring \
-  --checkpoint /path/to/crocostereo_finetune_spring.pth \
-  --croco-root vendor/croco \
-  --bundle /path/to/stablebridge/FROZEN_METHOD.json \
-  --variants clean
+unzip /path/to/stereo_weights.zip
 ```
 
-The historical frozen clean configuration is retained at
-`tracks/stereo/configs/submission-sb0-stablebridge-clean.json`. Its absolute
-paths are provenance only; replace them for a new machine.
+This installs the CroCo checkpoint, fixed evidence module and six selector
+heads under `weights/`.
 
-## Package an official submission
+## Data
 
-Validate first without writing an HDF5 package:
+`data/training_features.npz` contains features and targets for 8,784 examples
+from 144 pairs in 36 Spring scenes. `data/heldout_predictions.npz` contains
+six-fold scene-held-out outputs for calibration and evaluation. Both can be used
+without raw images. Samples and folds are in `configs/samples.jsonl`; all training,
+pretraining, fine-tuning and validation data are listed in [DATASETS.md](DATASETS.md).
+
+For submission inference, download the Spring and RobustSpring test images:
 
 ```bash
-PYTHONPATH=. python tracks/stereo/package_submission.py \
-  --predictions-root /path/to/predictions \
-  --clean-test-root /path/to/spring/test \
-  --robust-test-root /path/to/robust_spring \
-  --tools-root /path/to/official/subsampling_tools \
-  --runtime-root /path/to/hdf5/runtime \
-  --output-dir /path/to/submission \
-  --mode clean \
-  --validation-level full
+python download.py --root /data/stereo --dataset spring-test --workers 1
+python download.py --root /data/stereo --dataset robustspring --workers 1
+export SPRING_TEST=/data/stereo/datasets/spring/extracted/spring/test
+export ROBUST_TEST=/data/stereo/datasets/robustspring/extracted/robust_spring
 ```
 
-Add `--execute` only after validation passes. Use `--mode robust` or
-`--mode all` only for the corresponding frozen evaluation protocol.
+`SPRING_TEST` contains `<scene>/frame_left/` and `<scene>/frame_right/`.
+`ROBUST_TEST` contains `<corruption>/test/<scene>/frame_<camera>/`.
+Archive URLs and sizes are in `configs/datasets.json`. Downloaded ZIPs are deleted
+after extraction; use a dedicated download directory.
 
-## Verification
+## Inference
+
+Run one clean pair:
 
 ```bash
-sha256sum -c SHA256SUMS
-PYTHONPATH=. pytest -q tests/stereo_submission
+python predict.py --mode clean --limit-pairs 1 --output-root runs/preview \
+  --clean-test-root "$SPRING_TEST" --robust-test-root "$ROBUST_TEST"
 ```
 
-The focused tests require neither a GPU nor model checkpoints. Full end-to-end
-verification additionally requires the external assets above.
+Inputs are 1080 × 1920 RGB stereo pairs. Both reference views are predicted as
+float32 `.dsp5` files with HDF5 `/disparity` shape `(1080,1920,1)`.
+CroCo runs in FP32 with 352 × 704 tiles and overlap 0.9; selector encoding uses
+BF16. Selector settings are in `weights/model.json`.
 
-## Licensing and data
+The default batch size is four pairs; use `--batch-pairs 1` to reduce memory.
+Clean pairs must select the identity treatment or inference stops.
 
-No blanket license is granted for the first-party research code by this
-repository. The vendored CroCo code retains its upstream license and notices in
-`vendor/croco/LICENSE`, `vendor/croco/NOTICE`, and
-`vendor/croco/NOTICE_CHECKPOINTS`. Dataset, checkpoint, and benchmark-tool terms
-remain those of their respective providers; none of those assets are
-redistributed here.
+## Evaluation
 
+Evaluate the supplied scene-held-out crop predictions on CPU:
+
+```bash
+python evaluate.py --output runs/evaluation.json
+python -m pytest -q tests
+```
+
+| Input | CroCo Abs (px) | StableBridge Abs (px) |
+| --- | ---: | ---: |
+| Clean | 0.684384 | 0.684384 |
+| Corrupted | 2.724254 | 2.585896 |
+
+The corrupted error reduction is 5.079%, with a 95% scene-resampling interval of
+3.600%–6.567%. These are six-fold results with fitted models, thresholds and
+decisions held fixed during scene resampling. To evaluate a new cross-validation
+run, pass its `heldout_predictions.npz` with `--predictions` and the matching
+feature file with `--data`.
+
+## Training
+
+### Selector heads
+
+Reproduce the six outer folds and their inner-fold threshold calibration, then
+fit the six deployment heads on all development scenes:
+
+```bash
+python train.py --stage cross-validation --output runs/fitting --device cuda
+python train.py --stage final --evaluation runs/fitting/heldout_predictions.npz \
+  --output runs/model --device cuda
+```
+
+For a deployment-head refit using the supplied calibration, skip the first
+command and omit `--evaluation` in the second.
+The heads use CroCo blocks 1 and 8 with seeds 17, 43 and 89. Training uses
+80 epochs, width 128, batch size 512, AdamW at learning rate 0.001 and weight
+decay 0.001, cosine decay and gradient clipping at 5. CroCo and the evidence
+module stay frozen. The loss is in `stablebridge/optimization.py`.
+
+Both stages also support `--device cpu`. Repeat the same command to resume
+training; resource measurements are saved in `resources.json`.
+
+### Features and targets
+
+To rebuild the training data from Spring images and left disparity:
+
+```bash
+python download.py --root /data/stereo --dataset spring-train --workers 1
+export SPRING_ROOT=/data/stereo/datasets/spring/extracted/spring
+python prepare.py --dataset-root "$SPRING_ROOT" --output runs/training_features.npz
+```
+
+Preparation requires CUDA and can resume. Add `--data runs/training_features.npz`
+to both training commands above, using new output directories and the resulting
+cross-validation predictions for final fitting.
+
+## Submission
+
+Generate all clean and corrupted predictions, then pack them with the included
+official Linux x86_64 tools:
+
+```bash
+python predict.py --mode all --output-root runs/predictions \
+  --clean-test-root "$SPRING_TEST" --robust-test-root "$ROBUST_TEST"
+python package_submission.py --predictions-root runs/predictions \
+  --clean-test-root "$SPRING_TEST" --robust-test-root "$ROBUST_TEST" \
+  --output-dir runs/submission --mode all --execute
+```
+
+Submit `runs/submission/disp1_submission.hdf5` for clean test and
+`runs/submission/disp1_robustness.hdf5` for robustness. Robustness packing requires
+all 21 conditions, including clean: 21,000 pairs and 42,000 disparity maps.
+Omit `--execute` to check coverage and format before packing.
+
+Repeat the prediction command to resume. Use a new output directory if the
+model, input data, batch size or software changes. To use refitted heads, add
+`--bundle runs/model/model.json` to both commands.
+
+## Compute
+
+Each stage can run on one RTX 3090 (24 GiB). Full-resolution FP32 CroCo inference
+used 6.821 GiB peak allocated memory with four pairs per batch. Training times,
+measurement conditions and CPU/storage requirements are in [COMPUTE.md](COMPUTE.md).
+
+## Acknowledgements
+
+This code uses [CroCo](https://github.com/naver/croco). Its code and weights retain
+the upstream terms in [LICENSE](vendor/croco/LICENSE),
+[NOTICE](vendor/croco/NOTICE) and
+[NOTICE_CHECKPOINTS](vendor/croco/NOTICE_CHECKPOINTS).
+Dataset terms are linked in [DATASETS.md](DATASETS.md).

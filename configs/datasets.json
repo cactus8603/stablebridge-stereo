@@ -1,0 +1,162 @@
+{
+  "spring": {
+    "doi": "10.18419/DARUS-3376",
+    "files": [
+      {
+        "filename": "test_frame_left.zip",
+        "size_bytes": 2995538894,
+        "md5": "f0c52a7e2d5ba440eb31338b46fbc4b4",
+        "datafile_id": 199013
+      },
+      {
+        "filename": "test_frame_right.zip",
+        "size_bytes": 2996583105,
+        "md5": "914b464af2978a22d8800a94e721712d",
+        "datafile_id": 199014
+      },
+      {
+        "filename": "train_disp1_left.zip",
+        "size_bytes": 10608767690,
+        "md5": "9534f6094be09729aff3a0db31551257",
+        "datafile_id": 198961
+      },
+      {
+        "filename": "train_frame_left.zip",
+        "size_bytes": 13361546687,
+        "md5": "3a53483fc920514f72e553d1a11d271a",
+        "datafile_id": 199097
+      },
+      {
+        "filename": "train_frame_right.zip",
+        "size_bytes": 13363460448,
+        "md5": "3b6895a961f6822b824cd778ea03d936",
+        "datafile_id": 199098
+      }
+    ]
+  },
+  "robustspring": {
+    "doi": "10.18419/DARUS-5047",
+    "files": [
+      {
+        "filename": "brightness.zip",
+        "size_bytes": 6507003526,
+        "md5": "fd328272ee8258f40ff60cd1d2788495",
+        "datafile_id": 382158
+      },
+      {
+        "filename": "contrast.zip",
+        "size_bytes": 3038605228,
+        "md5": "9df74aff27e78a82e95aa69b06f450a0",
+        "datafile_id": 382152
+      },
+      {
+        "filename": "defocus_blur.zip",
+        "size_bytes": 2864075539,
+        "md5": "0a6670887db444cf108c9a989f93f921",
+        "datafile_id": 382169
+      },
+      {
+        "filename": "elastic_transform.zip",
+        "size_bytes": 5398173412,
+        "md5": "a766ba2e5f5eacf1e10372929d0a2f04",
+        "datafile_id": 382153
+      },
+      {
+        "filename": "fog.zip",
+        "size_bytes": 4374030938,
+        "md5": "938c6fd2196df97241514bf9ad0f19df",
+        "datafile_id": 382157
+      },
+      {
+        "filename": "frost.zip",
+        "size_bytes": 6598269747,
+        "md5": "ef541d3a61960d547616b35ef83ef01c",
+        "datafile_id": 382168
+      },
+      {
+        "filename": "gaussian_blur.zip",
+        "size_bytes": 2533301561,
+        "md5": "55f0fbe8cc735bade8f79f1f16bf6e37",
+        "datafile_id": 382167
+      },
+      {
+        "filename": "gaussian_noise.zip",
+        "size_bytes": 11469449477,
+        "md5": "a153d4a4f00cfead85c9f02915e16176",
+        "datafile_id": 382161
+      },
+      {
+        "filename": "glass_blur.zip",
+        "size_bytes": 3323274685,
+        "md5": "430c2b03099f2d1247a086ee79899898",
+        "datafile_id": 382166
+      },
+      {
+        "filename": "impulse_noise.zip",
+        "size_bytes": 7844688527,
+        "md5": "27bded75e845609a52b9cfd5ec07cc04",
+        "datafile_id": 382165
+      },
+      {
+        "filename": "jpeg_compression.zip",
+        "size_bytes": 1089898616,
+        "md5": "865face5c72e613f8af9c2c77f6afeb0",
+        "datafile_id": 382154
+      },
+      {
+        "filename": "motion_blur.zip",
+        "size_bytes": 4980199694,
+        "md5": "bbe7209567c5fe9b309232ca2ac0d357",
+        "datafile_id": 382156
+      },
+      {
+        "filename": "pixelate.zip",
+        "size_bytes": 321132607,
+        "md5": "309c6ca5f5266f690ae8f95b1cb1b9a8",
+        "datafile_id": 382164
+      },
+      {
+        "filename": "rain.zip",
+        "size_bytes": 6923981274,
+        "md5": "e8bd5420a5f015fd462677d3913fd070",
+        "datafile_id": 382160
+      },
+      {
+        "filename": "saturate.zip",
+        "size_bytes": 5849553852,
+        "md5": "aa9b1a1140baaf993e526e8f75074ebc",
+        "datafile_id": 382155
+      },
+      {
+        "filename": "shot_noise.zip",
+        "size_bytes": 6981958996,
+        "md5": "919eaeebc44df4da3de401a2fc6057c4",
+        "datafile_id": 382170
+      },
+      {
+        "filename": "snow.zip",
+        "size_bytes": 6987339923,
+        "md5": "509b58efe3bb9901b66ac88255a11cd8",
+        "datafile_id": 382162
+      },
+      {
+        "filename": "spatter.zip",
+        "size_bytes": 7017025393,
+        "md5": "c3dcba3a4a77a6e7e4106e1e87e4a4a6",
+        "datafile_id": 382163
+      },
+      {
+        "filename": "speckle_noise.zip",
+        "size_bytes": 11631176553,
+        "md5": "7d27539fb4031bff4fab589c65961833",
+        "datafile_id": 382171
+      },
+      {
+        "filename": "zoom_blur.zip",
+        "size_bytes": 3726790275,
+        "md5": "5cb3922ca0c83a165d777d924687e27c",
+        "datafile_id": 382159
+      }
+    ]
+  }
+}
